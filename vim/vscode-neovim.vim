@@ -15,7 +15,8 @@ let s:vscodePluginEventName = "vscode-neovim"
 " RPC and global functions
 
 function! VSCodeCall(cmd, ...)
-    call rpcrequest(g:vscode_channel, s:vscodeCommandEventName, a:cmd, a:000)
+    let res = rpcrequest(g:vscode_channel, s:vscodeCommandEventName, a:cmd, a:000)
+    return res
 endfunction
 
 function! VSCodeCallRange(cmd, line1, line2, ...)
@@ -31,7 +32,8 @@ function! VSCodeNotifyRange(cmd, line1, line2, ...)
 endfunction
 
 function! VSCodeExtensionCall(cmd, ...)
-    call rpcrequest(g:vscode_channel, s:vscodePluginEventName, a:cmd, a:000)
+    let res = rpcrequest(g:vscode_channel, s:vscodePluginEventName, a:cmd, a:000)
+    return res
 endfunction
 
 function! VSCodeExtensionNotify(cmd, ...)
@@ -159,6 +161,23 @@ function! s:onCursorMovedI()
     if reg != ""
     endif
 endfunction
+
+function s:pasteFromClipboard()
+    let res = VSCodeExtensionCall('clipboard', 'get')
+    return [res, 'v']
+endfunction
+
+let g:clipboard = {
+\ 'name': 'VSCode',
+\ 'copy': {
+\   '+': {lines, regtype -> VSCodeExtensionCall('clipboard', 'set', lines) },
+\   '*': {lines, regtype -> VSCodeExtensionCall('clipboard', 'set', lines) },
+\  },
+\ 'paste': {
+\   '+': {-> [VSCodeExtensionCall('clipboard', 'get'), 'V'] },
+\   '*': {-> [VSCodeExtensionCall('clipboard', 'get'), 'V'] },
+\  },
+\ }
 
 
 " Load altercmd first

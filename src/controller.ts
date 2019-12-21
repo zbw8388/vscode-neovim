@@ -2354,6 +2354,16 @@ export class NVIMPluginController implements vscode.Disposable {
                 );
                 break;
             }
+            case "clipboard": {
+                const [type, lines] = args as ["get" | "set", string[]];
+                if (type === "get") {
+                    const text = await vscode.env.clipboard.readText();
+                    return text.split("\n");
+                } else if (type === "set") {
+                    await vscode.env.clipboard.writeText(lines.join("\n"));
+                }
+                break;
+            }
             case "cursor": {
                 const [winId, mode, [line1based, col0based], visualStart] = args as [
                     number,
