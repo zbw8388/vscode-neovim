@@ -385,7 +385,7 @@ export class CursorManager
                 (kind === TextEditorSelectionChangeKind.Mouse && !selections[0].active.isEqual(selections[0].anchor)) ||
                 this.modeManager.isVisualMode
             ) {
-                if (kind !== TextEditorSelectionChangeKind.Mouse || !this.settings.mouseSelectionEnabled) {
+                if (kind !== TextEditorSelectionChangeKind.Keyboard && (kind !== TextEditorSelectionChangeKind.Mouse || !this.settings.mouseSelectionEnabled)) {
                     return;
                 } else {
                     const grid = this.bufferManager.getGridIdForWinId(winId);
