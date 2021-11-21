@@ -112,10 +112,22 @@ export class CommandsController implements Disposable, NeovimExtensionRequestPro
             return;
         }
         const visibleRanges = editor.visibleRanges;
-        const scrollLines = Math.ceil(
+        
+        const moveLines = Math.ceil(
             (visibleRanges[0].end.line - visibleRanges[0].start.line) / (by === "halfPage" ? 2 : 1),
         );
-        vscode.commands.executeCommand("cursorMove", { to, by: "line", value: scrollLines, revealCursor: true });
+        let scrollLines = moveLines;
+        if (to === "down") {
+            // This makes <C-d> less wonky when `editor.scrollBeyondLastLine` is enabled
+            scrollLines = Math.min(
+                moveLines,
+                editor.document.lineCount - 1 - visibleRanges[visibleRanges.length - 1].end.line,
+            );
+        }
+        if (scrollLines > 0) {
+            vscode.commands.executeCommand("editorScroll", { to, by: "line", value: scrollLines });
+        }
+        vscode.commands.executeCommand("cursorMove", { to, by: "line", value: moveLines, revealCursor: true });
     };
 
     private scrollLine = (to: "up" | "down"): void => {
