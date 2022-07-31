@@ -5,6 +5,7 @@ import { DocumentChangeManager } from "./document_change_manager";
 import { Logger } from "./logger";
 import { ModeManager } from "./mode_manager";
 import { normalizeInputString } from "./utils";
+import { ViewportManager } from "./viewport_manager";
 
 const LOG_PREFIX = "TypingManager";
 
@@ -40,10 +41,12 @@ export class TypingManager implements Disposable {
         private client: NeovimClient,
         private modeManager: ModeManager,
         private changeManager: DocumentChangeManager,
+        private viewportManager: ViewportManager,
     ) {
         this.registerType();
         this.disposables.push(commands.registerCommand("replacePreviousChar", this.onVSCodeReplacePreviousChar));
         this.disposables.push(commands.registerCommand("vscode-neovim.send", this.onSendCommand));
+        this.disposables.push(commands.registerCommand("vscode-neovim.sendScroll", this.onSendScrollCommand));
         this.disposables.push(commands.registerCommand("vscode-neovim.send-blocking", this.onSendBlockingCommand));
         this.disposables.push(commands.registerCommand("vscode-neovim.escape", this.onEscapeKeyCommand));
         this.disposables.push(
@@ -148,6 +151,11 @@ export class TypingManager implements Disposable {
             await this.client.input(`${key}`);
         }
     };
+    
+    private onSendScrollCommand = async (key: string): Promise<void> => {
+        this.viewportManager.expectScrollCommand();
+        this.onSendCommand(key);
+    }
 
     private onSendBlockingCommand = async (key: string): Promise<void> => {
         this.registerType();
