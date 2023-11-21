@@ -257,6 +257,11 @@
                     "default": "",
                     "markdownDescription": "Specify the WSL distribution to run neovim in. Use default WSL distro if empty. Use wsl.exe --list to see available distros"
                 },
+                "vscode-neovim.neovimLikePageScroll": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "(Temporary workaround before letting Neovim handle scrolling) If 'true' scrolls page (C-u, C-d, etc.) by scrolling the viewport and the cursor rather than only scrolling the viewport"
+                },
                 "vscode-neovim.revealCursorScrollLine": {
                     "type": "boolean",
                     "default": false,
