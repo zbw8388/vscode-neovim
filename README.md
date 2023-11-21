@@ -124,8 +124,13 @@ versions for the best experience. These can be found
     -   **Do not** use vim commands like `:w` in scripts/keybindings, they won't work. If you're using them in some
         custom commands/mappings, you might need to rebind them to call VSCode commands from Neovim with
         `require('vscode').call()` (see [API](#%EF%B8%8F-api)).
--   When you type some commands they may be substituted for another, like `:write` will be replaced by `:Write`.
--   Scrolling is done by VSCode. <kbd>C-d</kbd>/<kbd>C-u</kbd>/etc are slightly different.
+    -   Since version 1.18.0, `:w`, `:wa` and `:sav` commands are supported and no longer alias to VSCode commands. You
+        can use them as you would in Neovim.
+-   When you type some commands they may be substituted for another, check
+    [AlterCommand](https://github.com/search?q=repo%3Avscode-neovim%2Fvscode-neovim%20AlterCommand&type=code) for the
+    list of substitutions.
+-   Scrolling is done by VSCode. <kbd>C-d</kbd>/<kbd>C-u</kbd>/etc are slightly different. Enable
+    `vscode-neovim.neovimLikePageScroll` in settings for a scrolling experience more similar to that of Neovim.
 -   Editor customization (relative line number, scrolloff, etc) is handled by VSCode.
 -   Dot-repeat (<kbd>.</kbd>) is slightly different - moving the cursor within a change range won't break the repeat.
     sequence. In Neovim, if you type `abc<cursor>` in insert mode, then move the cursor to `a<cursor>bc` and type `1`

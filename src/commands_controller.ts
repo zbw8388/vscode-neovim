@@ -30,7 +30,31 @@ export class CommandsController implements Disposable {
 
     /// SCROLL COMMANDS ///
     private scrollPage = (by: "page" | "halfPage", to: "up" | "down"): void => {
-        vscode.commands.executeCommand("editorScroll", { to, by, revealCursor: true });
+        if (config.neovimLikePageScroll) {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return;
+            }
+            const visibleRanges = editor.visibleRanges;
+
+            const moveLines = Math.ceil(
+                (visibleRanges[0].end.line - visibleRanges[0].start.line) / (by === "halfPage" ? 2 : 1),
+            );
+            let scrollLines = moveLines;
+            if (to === "down") {
+                // This makes <C-d> less wonky when `editor.scrollBeyondLastLine` is enabled
+                scrollLines = Math.min(
+                    moveLines,
+                    editor.document.lineCount - 1 - visibleRanges[visibleRanges.length - 1].end.line,
+                );
+            }
+            if (scrollLines > 0) {
+                vscode.commands.executeCommand("editorScroll", { to, by: "line", value: scrollLines });
+            }
+            vscode.commands.executeCommand("cursorMove", { to, by: "line", value: moveLines, revealCursor: true });
+        } else {
+            vscode.commands.executeCommand("editorScroll", { to, by, revealCursor: true });
+        }
     };
 
     private scrollLine = (to: "up" | "down"): void => {

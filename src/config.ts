@@ -108,6 +108,9 @@ export class Config implements Disposable {
     get wslDistribution() {
         return this.cfg.get("wslDistribution", "");
     }
+    get neovimLikePageScroll() {
+        return this.cfg.get("neovimLikePageScroll", false);
+    }
     get revealCursorScrollLine() {
         return this.cfg.get("revealCursorScrollLine", false);
     }
